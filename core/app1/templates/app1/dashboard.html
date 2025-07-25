@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block heading %}📊 Dashboard{% endblock %}
 {% block content %}
-<div class="mt-4">
+<div class="mt-6">
 
 
 <!-- Summary Cards -->
@@ -16,7 +16,7 @@
   </div>
   <div class="bg-white p-6 rounded-xl shadow border border-green-100">
     <h2 class="text-gray-600 font-medium">Today’s Sales</h2>
-    <p class="text-3xl font-bold text-green-600">Rs. {{ total_sales_today|floatformat:3 }}</p>
+    <p class="text-3xl font-bold text-green-600">Rs. {{ total_sales_today|floatformat:2 }}</p>
   </div>
 </div>
 
