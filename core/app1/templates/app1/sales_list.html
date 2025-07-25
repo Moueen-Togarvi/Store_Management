@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Sales History</h1>
+
+<table class="min-w-full text-sm text-left border border-gray-300 shadow rounded-lg overflow-hidden">
+    <thead class="bg-gray-200 text-gray-700">
+        <tr>
+            <th class="px-4 py-2">ID</th>
+            <th class="px-4 py-2">Date</th>
+            <th class="px-4 py-2">Cashier</th>
+            <th class="px-4 py-2">Total</th>
+            <th class="px-4 py-2">Items</th>
+        </tr>
+    </thead>
+    <tbody class="bg-white">
+        {% for sale in sales %}
+        <tr class="border-t hover:bg-gray-50">
+            <td class="px-4 py-2 font-semibold text-gray-800">{{ sale.id }}</td>
+            <td class="px-4 py-2">{{ sale.date|date:"Y-m-d H:i" }}</td>
+            <td class="px-4 py-2">{{ sale.cashier }}</td>
+            <td class="px-4 py-2 text-green-600 font-bold">Rs. {{ sale.total_amount }}</td>
+            <td class="px-4 py-2">
+                <ul class="list-disc pl-5 text-sm text-gray-700">
+                    {% for item in sale.items.all %}
+                        <li>{{ item.product.name }} × {{ item.quantity }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'sale_return' sale.id %}" class="mt-2 inline-block bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Return/Refund</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="px-4 py-4 text-center text-gray-500">No sales yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

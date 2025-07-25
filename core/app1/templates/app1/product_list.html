@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block heading %}📦 Product List{% endblock %}
+{% block content %}
+
+<!-- Header Actions -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4 mt-12">
+  <h2 class="text-2xl font-bold text-gray-800">📋 Inventory Management</h2>
+  <div class="flex flex-wrap gap-2">
+    <a href="{% url 'product_create' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
+      ➕ Add Product
+    </a>
+    <a href="{% url 'category_create' %}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow">
+      ➕ Add Category
+    </a>
+    <a href="{% url 'supplier_list' %}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg shadow">
+      🛠 Manage Suppliers
+    </a>
+  </div>
+</div>
+
+<!-- ✅ Product Section Heading -->
+<h3 class="text-xl font-semibold text-gray-800 mb-2">📦 Product List</h3>
+
+<!-- Product Table -->
+<div class="overflow-x-auto bg-white p-6 rounded-xl shadow border border-gray-200">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-100 text-gray-700 text-sm font-semibold">
+      <tr>
+        <th class="px-4 py-3 text-left">Name</th>
+        <th class="px-4 py-3 text-left">SKU</th>
+        <th class="px-4 py-3 text-left">Quantity</th>
+        <th class="px-4 py-3 text-left">Price (Rs.)</th>
+        <th class="px-4 py-3 text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="text-sm text-gray-800">
+      {% for product in products %}
+      <tr class="border-t hover:bg-gray-50 transition duration-200">
+        <td class="px-4 py-3 whitespace-nowrap">{{ product.name }}</td>
+        <td class="px-4 py-3">{{ product.sku }}</td>
+        <td class="px-4 py-3">{{ product.quantity }}</td>
+        <td class="px-4 py-3">Rs. {{ product.selling_price }}</td>
+        <td class="px-4 py-3 space-x-3">
+          <a href="{% url 'product_edit' product.id %}" class="text-blue-600 hover:underline">Edit</a>
+          <a href="{% url 'product_delete' product.id %}" class="text-red-600 hover:underline">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="px-4 py-6 text-center text-gray-500">No products available.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- ✅ Category Section Heading -->
+<h3 class="text-xl font-semibold text-gray-800 mt-10 mb-2">🗂 Category List</h3>
+
+<!-- Category Section -->
+<div class="bg-white p-6 rounded-xl shadow border border-gray-200">
+  <ul class="divide-y divide-gray-200 text-sm text-gray-700">
+    {% for category in categories %}
+    <li class="flex justify-between items-center py-2">
+      <span>{{ category.name }}</span>
+      <div class="space-x-2">
+        <a href="{% url 'category_edit' category.id %}" class="text-blue-600 hover:underline">Edit</a>
+        <a href="{% url 'category_delete' category.id %}" class="text-red-600 hover:underline">Delete</a>
+      </div>
+    </li>
+    {% empty %}
+    <li class="py-2 text-gray-500">No categories available.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% endblock %}

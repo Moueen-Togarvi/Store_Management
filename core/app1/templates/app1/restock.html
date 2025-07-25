@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block heading %}📦 Restock Request{% endblock %}
+{% block content %}
+
+
+<h1 class="text-2xl font-bold mb-4 mt-6">🧾 Suppliers</h1>
+
+{% for supplier in suppliers %}
+
+  <div class="mb-6 p-6 bg-white rounded-xl shadow border border-gray-200 mt-12">
+    <div class="flex items-center justify-between mb-2">
+      <h3 class="text-xl font-semibold text-gray-800">{{ supplier.name }}</h3>
+    </div>
+    <p class="text-sm text-gray-600 mb-4"> 📞 {{ supplier.contact }}  |   Product:  {{ supplier.producte }}</p>
+
+    {% with low_stock=supplier.product_set.all|dictsort:"name" %}
+      {% if low_stock %}
+        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+          {% for product in low_stock %}
+            {% if product.quantity < 10 %}
+              <li>
+                <span class="font-medium">{{ product.name }}</span> —
+                <span class="text-red-600 font-semibold">Qty: {{ product.quantity }}</span>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-500">✅ All products in stock.</p>
+      {% endif %}
+    {% endwith %}
+  </div>
+{% endfor %}
+
+{% endblock %}

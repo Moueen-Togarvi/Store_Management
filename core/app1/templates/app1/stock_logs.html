@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block heading %}Stock Logs{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-semibold mb-6">📦 Stock Logs</h2>
+
+<!-- 🔍 Filter Form -->
+<form method="get" class="mb-6 flex flex-wrap gap-4 items-end bg-gray-50 p-4 rounded-lg shadow-sm">
+  <!-- Product Filter -->
+  <div>
+    <label class="block text-sm font-semibold mb-1">Product</label>
+    <select name="product" class="border rounded px-2 py-1">
+      <option value="">All</option>
+      {% for product in products %}
+        <option value="{{ product.id }}" {% if request.GET.product == product.id|stringformat:'s' %}selected{% endif %}>
+          {{ product.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- User Filter -->
+  <div>
+    <label class="block text-sm font-semibold mb-1">User</label>
+    <select name="user" class="border rounded px-2 py-1">
+      <option value="">All</option>
+      {% for user in users %}
+        <option value="{{ user.id }}" {% if request.GET.user == user.id|stringformat:'s' %}selected{% endif %}>
+          {{ user.username }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Date Filter -->
+  <div>
+    <label class="block text-sm font-semibold mb-1">Date</label>
+    <input type="date" name="date" value="{{ request.GET.date }}" class="border rounded px-2 py-1" />
+  </div>
+
+  <!-- Buttons -->
+  <div>
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+      Filter
+    </button>
+    <a href="?" class="ml-2 text-blue-600 underline">Reset</a>
+  </div>
+</form>
+
+<!-- 📋 Log Table -->
+<table class="w-full border-collapse border border-gray-300 text-sm shadow-sm">
+  <thead class="bg-gray-100 text-left">
+    <tr>
+      <th class="border px-4 py-2">Product</th>
+      <th class="border px-4 py-2">Change</th>
+      <th class="border px-4 py-2">Reason</th>
+      <th class="border px-4 py-2">User</th>
+      <th class="border px-4 py-2">Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+    <tr class="hover:bg-gray-50">
+      <td class="border px-4 py-2">{{ log.product.name }}</td>
+      <td class="border px-4 py-2 {% if log.change < 0 %}text-red-600{% else %}text-green-600{% endif %}">
+        {{ log.change }}
+      </td>
+      <td class="border px-4 py-2">{{ log.reason }}</td>
+      <td class="border px-4 py-2">{{ log.user }}</td>
+      <td class="border px-4 py-2">{{ log.created_at|date:"Y-m-d H:i" }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="5" class="border px-4 py-2 text-center text-gray-500">No logs found.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

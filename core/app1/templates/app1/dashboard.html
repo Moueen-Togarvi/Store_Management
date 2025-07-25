@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block heading %}📊 Dashboard{% endblock %}
+{% block content %}
+<div class="mt-4">
+
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <div class="bg-white p-6 rounded-xl shadow border border-blue-100">
+    <h2 class="text-gray-600 font-medium">Total Products</h2>
+    <p class="text-3xl font-bold text-blue-600">{{ total_products }}</p>
+  </div>
+  <div class="bg-white p-6 rounded-xl shadow border border-red-100">
+    <h2 class="text-gray-600 font-medium">Low Stock</h2>
+    <p class="text-3xl font-bold text-red-600">{{ low_stock_products.count }}</p>
+  </div>
+  <div class="bg-white p-6 rounded-xl shadow border border-green-100">
+    <h2 class="text-gray-600 font-medium">Today’s Sales</h2>
+    <p class="text-3xl font-bold text-green-600">Rs. {{ total_sales_today|floatformat:3 }}</p>
+  </div>
+</div>
+
+<!-- Top-Selling and Low Stock Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  <!-- Top-Selling Products (Left) -->
+  <div class="bg-blue-50 p-4 rounded-xl shadow border border-blue-200 h-full flex flex-col">
+    <h3 class="text-lg font-bold mb-2 text-blue-700">🏆 Top-Selling Products</h3>
+    <div style="max-height: 120px; overflow-y: auto;">
+      <table class="min-w-full text-sm border border-blue-100 rounded-xl">
+        <thead class="bg-blue-100">
+          <tr>
+            <th class="px-3 py-2 text-left text-blue-700 font-semibold">Product</th>
+            <th class="px-3 py-2 text-left text-blue-700 font-semibold">Sold</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in top_selling %}
+          <tr class="border-b hover:bg-blue-200 transition">
+            <td class="px-3 py-2 font-semibold">{{ item.product__name }}</td>
+            <td class="px-3 py-2 text-blue-700 font-bold">{{ item.total_sold }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="2" class="px-3 py-2 text-center text-gray-400">No sales yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Low Stock Products (Right) -->
+  <div class="bg-red-50 p-4 rounded-xl shadow border border-red-200 h-full flex flex-col">
+    <h3 class="text-lg font-bold mb-2 text-red-600">🚨 Low Stock Products</h3>
+
+    {% if low_stock_products %}
+
+    <div style="max-height: 120px; overflow-y: auto;">
+      <table class="min-w-full text-sm border border-red-100 rounded-xl">
+        <thead class="bg-red-100">
+          <tr>
+            <th class="px-3 py-2 text-left text-red-700 font-semibold">Product</th>
+            <th class="px-3 py-2 text-left text-red-700 font-semibold">Qty</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in low_stock_products %}
+          <tr class="border-b hover:bg-red-200 transition">
+            <td class="px-3 py-2 font-semibold">{{ p.name }}</td>
+            <td class="px-3 py-2 text-red-700 font-bold">{{ p.quantity }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+
+    {% else %}
+           <p class="mt-2 text-green-700 px-4 py-2 rounded-md shadow text-sm font-medium inline-block">
+      ✅ Stock Level is Sufficient
+    </p>
+        {% endif %}
+
+  </div>
+</div>
+
+<!-- Quick Action Buttons -->
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+  <a href="{% url 'create_sale' %}" class="flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-extrabold px-8 py-4 rounded-full shadow-lg border-2 border-green-600 text-lg transition">
+    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+    New Sale
+  </a>
+  <a href="{% url 'sales_list' %}" class="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-full shadow transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+    View Sales
+  </a>
+  <a href="{% url 'stock_logs' %}" class="flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-900 font-semibold px-6 py-3 rounded-full shadow transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v4a1 1 0 001 1h3m10 0h3a1 1 0 001-1V7m-1 4V7a2 2 0 00-2-2H7a2 2 0 00-2 2v4m0 0v6a2 2 0 002 2h10a2 2 0 002-2v-6"/></svg>
+    Stock Logs
+  </a>
+  <a href="{% url 'product_list' %}" class="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-6 py-3 rounded-full shadow transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 13V7a2 2 0 00-2-2H6a2 2 0 00-2 2v6m16 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6m16 0H4"/></svg>
+    Manage Products
+  </a>
+  <a href="{% url 'restock' %}" class="flex items-center justify-center gap-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-gray-900 font-semibold px-6 py-3 rounded-full shadow transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    Restock Request
+  </a>
+  {% if user.role == 'admin' %}
+  <a href="{% url 'sales_report' %}" class="flex items-center justify-center gap-2 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white font-semibold px-6 py-3 rounded-full shadow transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg>
+    Sales Reports
+  </a>
+  {% endif %}
+</div>
+
+<!-- Recent Sales -->
+<div class="mb-6 bg-white mt-4 p-4 rounded-xl shadow border border-gray-200">
+  <h3 class="text-lg font-bold mb-4 text-gray-700 flex items-center">🧾 Recent Sales</h3>
+  <div style="max-height: 160px; overflow-y: auto;">
+    <table class="min-w-full text-sm border border-gray-100 rounded-xl">
+      <thead class="bg-blue-50">
+        <tr>
+          <th class="px-3 py-2 text-left text-gray-600 font-semibold">#</th>
+          <th class="px-3 py-2 text-left text-gray-600 font-semibold">Date</th>
+          <th class="px-3 py-2 text-left text-gray-600 font-semibold">Amount</th>
+          <th class="px-3 py-2 text-left text-gray-600 font-semibold">Cashier</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sale in recent_sales %}
+        <tr class="border-b hover:bg-blue-50 transition">
+          <td class="px-3 py-2 font-semibold text-blue-700">#{{ sale.id }}</td>
+          <td class="px-3 py-2">{{ sale.date|date:"Y-m-d H:i" }}</td>
+          <td class="px-3 py-2 text-green-700 font-bold">Rs. {{ sale.total_amount }}</td>
+          <td class="px-3 py-2">{{ sale.cashier }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="px-3 py-2 text-center text-gray-400">No recent sales.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+{% endblock %}

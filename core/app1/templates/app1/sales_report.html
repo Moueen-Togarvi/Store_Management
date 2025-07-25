@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load dict_extras %}
+
+{% block heading %}Sales Reports{% endblock %}
+
+{% block content %}
+<div class="space-y-10">
+
+  <!-- 🗓️ Daily Sales -->
+  <section>
+    <h2 class="text-xl font-bold mb-2">📅 Daily Sales</h2>
+    <ul class="bg-white shadow p-4 rounded">
+      {% for d in daily %}
+        <li class="border-b py-1">{{ d.day|date:"Y-m-d" }} — <span class="font-semibold text-green-600">Rs. {{ d.total }}</span></li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <!-- 📆 Monthly Sales -->
+  <section>
+    <h2 class="text-xl font-bold mb-2">🗓️ Monthly Sales</h2>
+    <ul class="bg-white shadow p-4 rounded">
+      {% for m in monthly %}
+        <li class="border-b py-1">{{ m.month|date:"F Y" }} — <span class="font-semibold text-blue-600">Rs. {{ m.total }}</span></li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <!-- 🧾 All Sales -->
+  <section>
+    <h2 class="text-xl font-bold mb-2">📋 All Sales</h2>
+    <table class="w-full table-auto border border-gray-300 shadow-sm text-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border px-2 py-1">Date</th>
+          <th class="border px-2 py-1">Amount</th>
+          <th class="border px-2 py-1">Payment Method</th>
+          <th class="border px-2 py-1">Total Refunded</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sale in sales %}
+        <tr class="hover:bg-gray-50">
+          <td class="border px-2 py-1">{{ sale.date|date:"Y-m-d H:i" }}</td>
+          <td class="border px-2 py-1 text-green-600">Rs. {{ sale.total_amount }}</td>
+          <td class="border px-2 py-1">{{ sale.get_payment_method_display }}</td>
+          <td class="border px-2 py-1 text-red-500">Rs. {{ refunds|get_item:sale.id|default:0 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 💳 Totals by Payment Method -->
+  <section>
+    <h2 class="text-xl font-bold mb-2">💰 Totals by Payment Method</h2>
+    <ul class="bg-white shadow p-4 rounded text-sm">
+      <li>Cash: <span class="font-semibold">Rs. {{ payment_totals.cash|default:0 }}</span></li>
+      <li>Card: <span class="font-semibold">Rs. {{ payment_totals.card|default:0 }}</span></li>
+      <li>Digital Wallet: <span class="font-semibold">Rs. {{ payment_totals.wallet|default:0 }}</span></li>
+    </ul>
+  </section>
+
+  <!-- 📈 Profit/Loss by Day -->
+  <section>
+    <h2 class="text-xl font-bold mb-2">📊 Profit/Loss by Day</h2>
+    <table class="w-full table-auto border text-sm shadow-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border px-2 py-1">Date</th>
+          <th class="border px-2 py-1">Revenue</th>
+          <th class="border px-2 py-1">Cost</th>
+          <th class="border px-2 py-1">Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in profit_loss_day %}
+        <tr>
+          <td class="border px-2 py-1">{{ row.period|date:"Y-m-d" }}</td>
+          <td class="border px-2 py-1 text-green-600">Rs. {{ row.revenue|floatformat:2 }}</td>
+          <td class="border px-2 py-1 text-gray-600">Rs. {{ row.cost|floatformat:2 }}</td>
+          <td class="border px-2 py-1 text-blue-600">Rs. {{ row.profit|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 📆 Profit/Loss by Week -->
+  <section>
+    <h2 class="text-xl font-bold mb-2">📅 Profit/Loss by Week</h2>
+    <table class="w-full table-auto border text-sm shadow-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border px-2 py-1">Week</th>
+          <th class="border px-2 py-1">Revenue</th>
+          <th class="border px-2 py-1">Cost</th>
+          <th class="border px-2 py-1">Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in profit_loss_week %}
+        <tr>
+          <td class="border px-2 py-1">{{ row.period|date:"Y-\WW" }}</td>
+          <td class="border px-2 py-1 text-green-600">Rs. {{ row.revenue|floatformat:2 }}</td>
+          <td class="border px-2 py-1 text-gray-600">Rs. {{ row.cost|floatformat:2 }}</td>
+          <td class="border px-2 py-1 text-blue-600">Rs. {{ row.profit|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 🗓️ Profit/Loss by Month -->
+  <section>
+    <h2 class="text-xl font-bold mb-2">📆 Profit/Loss by Month</h2>
+    <table class="w-full table-auto border text-sm shadow-sm">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="border px-2 py-1">Month</th>
+          <th class="border px-2 py-1">Revenue</th>
+          <th class="border px-2 py-1">Cost</th>
+          <th class="border px-2 py-1">Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in profit_loss_month %}
+        <tr>
+          <td class="border px-2 py-1">{{ row.period|date:"F Y" }}</td>
+          <td class="border px-2 py-1 text-green-600">Rs. {{ row.revenue|floatformat:2 }}</td>
+          <td class="border px-2 py-1 text-gray-600">Rs. {{ row.cost|floatformat:2 }}</td>
+          <td class="border px-2 py-1 text-blue-600">Rs. {{ row.profit|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+</div>
+{% endblock %}

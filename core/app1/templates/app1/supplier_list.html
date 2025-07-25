@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-lg shadow-md border">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-semibold text-gray-800">Suppliers</h2>
+    <a href="{% url 'supplier_create' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Add Supplier
+    </a>
+  </div>
+
+  <table class="min-w-full table-auto border border-gray-300 text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="px-4 py-2 text-left border">Name</th>
+        <th class="px-4 py-2 text-left border">Contact</th>
+        <th class="px-4 py-2 text-left border">Products</th>
+
+        <th class="px-4 py-2 text-left border">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for supplier in suppliers %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-2 border">{{ supplier.name }}</td>
+
+        <td class="px-4 py-2 border">{{ supplier.contact }}</td>
+        <td class="px-4 py-2 border">{{ supplier.producte }}</td>
+
+        <td class="px-4 py-2 border space-x-2">
+          <a href="{% url 'supplier_edit' supplier.pk %}" class="text-blue-600 hover:underline">Edit</a>
+          <a href="{% url 'supplier_delete' supplier.pk %}" class="text-red-600 hover:underline">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" class="text-center py-4 text-gray-500">No suppliers found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

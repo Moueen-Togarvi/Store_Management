@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    background: #fff;
+    color: #333;
+  }
+  .invoice-header {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #000;
+    padding-bottom: 8px;
+  }
+  .invoice-meta p {
+    margin: 4px 0;
+  }
+  .invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+  .invoice-table th,
+  .invoice-table td {
+    border: 1px solid #444;
+    padding: 8px;
+    text-align: left;
+  }
+  .invoice-table th {
+    background-color: #f2f2f2;
+  }
+  .text-right {
+    text-align: right;
+  }
+  .total-row {
+    font-weight: bold;
+    background-color: #f9f9f9;
+  }
+</style>
+
+<div class="invoice-header">🧾 Sale Invoice</div>
+
+<div class="invoice-meta">
+  <p><strong>Sale ID:</strong> {{ sale.id }}</p>
+  <p><strong>Date:</strong> {{ sale.created_at|date:"Y-m-d H:i" }}</p>
+</div>
+
+<table class="invoice-table">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Qty</th>
+      <th>Unit Price</th>
+      <th>Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in sale_items %}
+    <tr>
+      <td>{{ item.product.name }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>Rs. {{ item.price_per_item|floatformat:2 }}</td>
+      <td>Rs. {{ item.quantity|floatformat:2|floatformat:2|add:'0'|floatformat:2|add:item.price_per_item|floatformat:2 }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr class="total-row">
+      <td colspan="3" class="text-right">Total:</td>
+      <td>Rs. {{ sale.total_amount|floatformat:2 }}</td>
+    </tr>
+  </tfoot>
+</table>
+
+{% endblock %}

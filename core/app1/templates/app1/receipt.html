@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+@media print {
+  body, html { background: #fff !important; }
+  .receipt-container { max-width: 300px !important; margin: 0 auto !important; box-shadow: none !important; border: none !important; }
+  .no-print { display: none !important; }
+}
+.receipt-container { max-width: 300px; margin: 0 auto; background: #fff; padding: 16px 8px; border-radius: 8px; font-size: 13px; margin-top: 20px; font-family: monospace, monospace; }
+.receipt-header { text-align: center; font-weight: bold; font-size: 18px; letter-spacing: 2px; margin-bottom: 2px; }
+.receipt-subhead { text-align: center; font-size: 12px; margin-bottom: 2px; }
+.receipt-title { text-align: center; font-size: 14px; font-weight: bold; margin: 8px 0 4px 0; letter-spacing: 1px; }
+.receipt-table { width: 100%; margin-bottom: 8px; border-collapse: collapse; }
+.receipt-table th, .receipt-table td { font-size: 12px; padding: 2px 0; text-align: left; }
+.receipt-table th { font-weight: bold; border-bottom: 1px dashed #aaa; }
+.receipt-table td:last-child, .receipt-table th:last-child { text-align: right; }
+.receipt-total-row td { font-weight: bold; border-top: 1px solid #000; padding-top: 4px; }
+.receipt-footer { text-align: center; margin-top: 10px; font-size: 13px; letter-spacing: 1px; }
+.receipt-barcode { text-align: center; margin-top: 10px; }
+</style>
+<div class="receipt-container mt-16">
+  <div class="receipt-header">HASHIZ COLLECTION</div>
+  <div class="receipt-subhead">Tel: 0321-5558147</div>
+  <div class="receipt-title">CASH RECEIPT</div>
+  <div style="font-size:12px;text-align:center;margin-bottom:4px;">Date: {{ sale.date|date:"Y-m-d H:i" }} | Sale #: {{ sale.id }}</div>
+  <table class="receipt-table">
+    <thead>
+      <tr><th>Description</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      {% for item in sale.items.all %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price_per_item|floatformat:2 }}</td>
+        <td>{{ item.quantity|floatformat:0 }} x {{ item.price_per_item|floatformat:2 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr class="receipt-total-row">
+        <td colspan="3">TOTAL</td>
+        <td>Rs. {{ sale.total_amount|floatformat:2 }}</td>
+      </tr>
+      {% if sale.discount and sale.discount > 0 %}
+      <tr>
+        <td colspan="3">Discount</td>
+        <td>Rs. {{ sale.discount|floatformat:2 }}</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <td colspan="3">Payment</td>
+        <td>{{ sale.get_payment_method_display }}</td>
+      </tr>
+      {% if sale.change %}
+      <tr>
+        <td colspan="3">Change</td>
+        <td>Rs. {{ sale.change|floatformat:2 }}</td>
+      </tr>
+      {% endif %}
+    </tfoot>
+  </table>
+  <div class="receipt-footer">THANK YOU!</div>
+  <div class="receipt-barcode">
+    <svg width="120" height="30"><rect width="120" height="30" fill="#eee"/><text x="60" y="20" text-anchor="middle" font-size="12">{{ sale.id }}</text></svg>
+  </div>
+  <button class="no-print bg-green-600 text-white px-4 py-2 rounded mt-4" onclick="window.print()">🖨️ Print Receipt</button>
+</div>
+{% endblock %} 
